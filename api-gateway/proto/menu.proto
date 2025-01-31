@@ -1,0 +1,229 @@
+syntax = "proto3";
+
+package services;
+
+option go_package = "./services";
+
+import "google/protobuf/empty.proto";
+// import "google/protobuf/wrappers.proto";  // for nullable fields
+
+service MenuService {
+
+  // Handle Menu
+  rpc CreateMenuItem(CreateMenuItemRequest) returns (CreateMenuItemResponse);
+  rpc UpdateMenuItem(UpdateMenuItemRequest) returns (UpdateMenuItemResponse);
+  rpc DeleteMenuItem(DeleteMenuItemRequest) returns (DeleteMenuItemResponse);
+  rpc GetMenuItems(google.protobuf.Empty) returns (MenuItemList);
+  rpc GetMenuItemById(GetMenuItemByIdRequest) returns (MenuItem);
+
+  // Handle Menu Set
+  rpc CreateMenuSet(CreateMenuSetRequest) returns (CreateMenuSetResponse);
+  rpc UpdateMenuSet(UpdateMenuSetRequest) returns (UpdateMenuSetResponse);
+  rpc DeleteMenuSet(DeleteMenuSetRequest) returns (DeleteMenuSetResponse);
+  rpc GetMenuSets(google.protobuf.Empty) returns (MenuSetList);
+  rpc GetMenuSetById(GetMenuSetByIdRequest) returns (MenuSet);
+
+  // Handle Menu Set Item 
+  rpc CreateMenuSetItem(CreateMenuSetItemRequest) returns (CreateMenuSetItemResponse);
+  rpc GetMenuSetItems(google.protobuf.Empty) returns (MenuSetItemList);
+  rpc GetMenuSetItemByMenuSetID(GetMenuSetItemByIdRequest) returns (MenuSetItemList);
+  rpc UpdateMenuSetItem(UpdateMenuSetItemRequest) returns (UpdateMenuSetItemResponse);
+  rpc DeleteMenuSetItem(DeleteMenuSetItemRequest) returns (DeleteMenuSetItemResponse);
+
+  // Handle Upload Img On Cloud
+  rpc UploadImage(UploadImageRequest) returns (UploadImageResponse); 
+  rpc DeleteImage(DeleteImageRequest) returns (DeleteImageResponse); 
+}
+
+// ---------------- Enum ------------------------
+enum MenuCategory {
+    UNKNOWN = 0;    // ค่าเริ่มต้นหรือค่าไม่รู้จัก
+    MAIN_COURSE = 1;  // อาหารจานหลัก
+    BEVERAGE = 2;     // เครื่องดื่ม
+    DESSERT = 3;      // ของหวาน
+}
+enum Status {
+    SUCCESS = 0;      // สำเร็จ
+    FAILURE = 1;      // ล้มเหลว
+}
+
+// ---------------- Menu ------------------------
+message MenuItem {
+    string id = 1;             // ID ของเมนู
+    string name_th = 2;        // ชื่อเมนูภาษาไทย
+    string name_en = 3;        // ชื่อเมนูภาษาอังกฤษ
+    string description = 4;    // รายละเอียดของเมนู
+    double price = 5;          // ราคาของเมนู
+    MenuCategory category = 6; // ประเภทของเมนู (เช่น อาหารจานหลัก, เครื่องดื่ม)
+    string image_url = 7;      // URL รูปภาพของเมนู
+}
+
+// List Menu
+message MenuItemList {
+    repeated MenuItem menu_items = 1;  // รายการของเมนูทั้งหมด
+}
+
+// Create New Menu
+message CreateMenuItemRequest {
+    string name_th = 1;       // ชื่อเมนูภาษาไทย
+    string name_en = 2;       // ชื่อเมนูภาษาอังกฤษ
+    double price = 3;         // ราคาของเมนู
+    string description = 4;   // รายละเอียดของเมนู
+    MenuCategory category = 5; // ประเภทของเมนู
+    bytes image_data = 6;     // ข้อมูลไฟล์รูปภาพของเมนู
+}
+
+message CreateMenuItemResponse {
+    string id = 1;           // ID ของเมนูที่ถูกสร้าง
+    Status status = 2;       // สถานะของการสร้างเมนู
+}
+
+// Update Menu
+message UpdateMenuItemRequest {
+    string id = 1;            // ID ของเมนูที่ต้องการอัปเดต
+    string name_th = 2;       // ชื่อเมนูภาษาไทย
+    string name_en = 3;       // ชื่อเมนูภาษาอังกฤษ
+    string description = 4;   // รายละเอียดของเมนู
+    double price = 5;         // ราคาของเมนู
+    MenuCategory category = 6;      // ประเภทของเมนู
+    bytes image_data = 7;     // URL รูปภาพของเมนู
+}
+
+message UpdateMenuItemResponse {
+    Status status = 1;        // สถานะการอัปเดต (สำเร็จ/ล้มเหลว)
+}
+
+// Delete Menu
+message DeleteMenuItemRequest {
+    string id = 1;            // ID ของเมนูที่ต้องการลบ
+}
+
+message DeleteMenuItemResponse {
+    Status status = 1;        // สถานะของการลบเมนู (สำเร็จ/ล้มเหลว)
+}
+
+message GetMenuItemByIdRequest{
+    string id = 1;            // ID 
+}
+
+// ---------------- Menu Set ------------------------
+message MenuSet {
+    string id = 1;                  // ID ของเซตเมนู
+    string name = 2;                // ชื่อของเซตเมนู
+    double price = 3;               // ราคาของเซตเมนู
+}
+
+// List Menu Set
+message MenuSetList {
+    repeated MenuSet menu_sets = 1;  // รายการของเซตเมนูทั้งหมด
+}
+
+// Create New Menu Set
+message CreateMenuSetRequest {
+    string name = 1;               // ชื่อของเซตเมนู
+    double price = 2;              // ราคาของเซตเมนู
+}
+
+message CreateMenuSetResponse {
+    string id = 1;           // ID ของเซตเมนูที่ถูกสร้าง
+    Status status = 2;       // สถานะของการสร้างเซตเมนู (สำเร็จ/ล้มเหลว)
+}
+
+// Update Menu Set
+message UpdateMenuSetRequest {
+    string id = 1;                  // ID ของเซตเมนูที่ต้องการอัปเดต
+    string name = 2;                // ชื่อของเซตเมนู
+    double price = 3;               // ราคาของเซตเมนู
+}
+
+message UpdateMenuSetResponse {
+    Status status = 1;              // สถานะการอัปเดต (สำเร็จ/ล้มเหลว)
+}
+
+// Delete Menu Set
+message DeleteMenuSetRequest {
+    string id = 1;                  // ID ของเซตเมนูที่ต้องการลบ
+}
+
+message DeleteMenuSetResponse {
+    Status status = 1;              // สถานะการลบเซตเมนู (สำเร็จ/ล้มเหลว)
+}
+
+message GetMenuSetByIdRequest{
+    string id = 1;                  // ID 
+}
+
+// ---------------- Menu Set Item ------------------------
+// Create New Menu Set Item       
+message CreateMenuSetItemRequest {
+    string menu_set_id = 1;              // ID ของเซตเมนู
+    repeated string menu_item_id = 2;    // รายการ ID ของเมนูในเซต
+}
+
+message CreateMenuSetItemResponse {
+    Status status = 1;              // สถานะการเพิ่มเมนูในเซต (สำเร็จ/ล้มเหลว)
+}
+
+// Get Menu Set Items
+message GetMenuSetItemByIdRequest {
+    string menu_set_id = 1;         // ID ของเซตเมนู
+}
+
+message MenuSetItemList {
+    repeated MenuSetItem menu_set_items = 1;  // รายการของ MenuSetItem
+}
+
+// Update Menu Set Item
+message UpdateMenuSetItemRequest {
+    string menu_set_id = 1;         // ID ของเซตเมนู
+    repeated string menu_item_id = 2;  // รายการของ ID เมนูที่ต้องการอัปเดตในเซต
+}
+
+message UpdateMenuSetItemResponse {
+    Status status = 1;              // สถานะการอัปเดตเมนูในเซต (สำเร็จ/ล้มเหลว)
+}
+
+// Delete Menu Set Item
+message DeleteMenuSetItemRequest {
+    string menu_set_id = 1;         // ID ของเซตเมนู
+}
+
+message DeleteMenuSetItemResponse {
+    Status status = 1;              // สถานะการลบเมนูออกจากเซต (สำเร็จ/ล้มเหลว)
+}
+
+message MenuSetItem {
+    string menu_set_id = 1;          // ID ของเซตเมนู
+    string menu_item_id = 2;          // ID ของเมนู
+    string menu_set_name = 3;        // ชื่อของเซตเมนู
+    float menu_set_price = 4;        // ราคาของเซตเมนู
+    string menu_name_th = 5;         // ชื่อเมนู (ภาษาไทย)
+    string menu_name_en = 6;         // ชื่อเมนู (ภาษาอังกฤษ)
+    float menu_price = 7;            // ราคาของเมนู
+    string menu_category = 8;        // หมวดหมู่ของเมนู (เช่น MAIN_COURSE, BEVERAGE, DESSERT)
+    string image_url = 9;            // URL ของภาพเมนู
+}
+
+
+
+// ---------------- Image Upload & Delete ------------------------
+
+// Upload Img
+message UploadImageRequest {
+    bytes image_data = 1;       // ข้อมูลรูปภาพในรูปแบบ binary
+    string file_name = 2;       // ชื่อไฟล์
+}
+
+message UploadImageResponse {
+    string image_url = 1;       // URL ของรูปภาพที่อัปโหลดสำเร็จ
+    Status status = 2;          // สถานะ (สำเร็จ/ล้มเหลว)
+}
+
+// Delete Img
+message DeleteImageRequest {
+    string image_url = 1;       // URL ของรูปภาพที่ต้องการลบ
+}
+
+message DeleteImageResponse {
+    Status status = 1;          // สถานะการลบรูป (สำเร็จ/ล้มเหลว)
+}

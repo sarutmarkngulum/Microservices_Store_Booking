@@ -1,0 +1,20 @@
+
+services:
+  user-management-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    env_file:
+      - .env
+    volumes:
+      - .env:/app/.env
+    networks:
+      - my-network
+    image: user-management-service 
+    container_name: user-management-service
+
+networks:
+  my-network:
+    external: true 

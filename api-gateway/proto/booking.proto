@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package services;
+
+option go_package = "./services";
+
+// Booking Service Definition
+service BookingService {
+  rpc GetBookingDetails(GetBookingDetailsRequest) returns (GetBookingDetailsResponse);
+  rpc GetBookingDetailsByID(GetBookingDetailsByIDRequest) returns (GetBookingDetailsByIDResponse);
+  rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
+  rpc UpdateBooking(CreateBookingRequest) returns (UpdateBookingResponse);
+  rpc DeleteBooking(DeleteBookingRequest) returns (DeleteBookingResponse);
+}
+
+// Messages
+message BookingDetail {
+  string booking_id = 1;     // รหัสการจอง
+  string customer_name = 2;  // ชื่อคนจอง
+  string company_name = 3;   // ชื่อบริษัท
+  string booking_date_time = 4;  // เวลาการจอง
+  string phone_number = 5;   // เบอร์โทร
+  int32 num_children = 6;    // จำนวนเด็ก
+  int32 num_adults = 7;      // จำนวนผู้ใหญ่
+  int32 num_tables = 8;      // จำนวนโต๊ะ
+  repeated BookingTable tables = 9;  // รายการโต๊ะที่จอง
+  repeated BookingMenuSet menu_sets = 10;  // รายการเมนูเซ็ต
+  repeated BookingMenuItem menu_items = 11; // รายการเมนูจานเดี่ยว
+  string status = 12; 
+  double total_price = 13;     // ราคาทั้งหมด
+}
+
+
+// BookingMenuItem message
+message BookingMenuItem {
+  string menu_item_id = 1; // รหัส ID ของเมนู
+  string name_th = 2;      // ชื่อเมนูภาษาไทย
+  string name_en = 3;      // ชื่อเมนูภาษาอังกฤษ
+  string description = 4;  // คำอธิบาย
+  float price = 5;         // ราคา
+  string category = 6;     // หมวดหมู่
+  string image_url = 7;    // URL รูปภาพ
+  int32 quantity  = 8;
+}
+
+// BookingMenuSet message
+message BookingMenuSet {
+  string menu_set_id = 1; 
+  string menu_set_name = 2;  // ชื่อเมนูเซ็ต
+  float menu_set_price = 3;  // ราคาของเมนูเซ็ต
+  int32 quantity  = 4;
+  repeated BookingMenuItem menu_items = 5;  // เมนูภายในเซ็ต
+}
+
+// BookingTable message
+message BookingTable {
+  string table_id = 1; // รหัส ID ของโต๊ะ
+  string table_number = 2; // หมายเลขโต๊ะ
+  string type = 3; // ประเภทโต๊ะ
+  int32 seat_count = 4; // จำนวนที่นั่ง
+}
+
+message CreateBookingRequest {
+  string booking_id = 1; 
+  string customer_name = 2;
+  string company_name = 3;
+  string booking_date_time = 4;
+  string phone_number = 5;
+  int32 num_children = 6;
+  int32 num_adults = 7;
+  int32 num_tables = 8;
+  repeated string table_ids = 9;
+  repeated BookingMenuSet menu_sets = 10; 
+  repeated BookingMenuItem menu_items = 11; 
+  string status = 12;
+  double total_price = 13; 
+}
+
+message CreateBookingResponse {
+  string booking_id = 1;
+}
+
+// message UpdateBookingRequest {
+//   string booking_id = 1; // ID of the booking to be updated
+//   CreateBookingRequest booking = 2; 
+// }
+
+
+message UpdateBookingResponse {
+  bool success = 1; 
+}
+
+message DeleteBookingRequest {
+  string booking_id = 1;
+}
+
+message DeleteBookingResponse {
+  bool success = 1;
+}
+
+message GetBookingDetailsRequest {}
+
+message GetBookingDetailsResponse {
+  repeated BookingDetail booking_details = 1;
+}
+
+message GetBookingDetailsByIDRequest {
+  string booking_id = 1;
+}
+
+message GetBookingDetailsByIDResponse {
+  BookingDetail booking_detail = 1;
+}

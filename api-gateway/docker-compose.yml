@@ -1,0 +1,40 @@
+# services:
+#   api-gateway:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8080:8080"
+#     env_file:
+#       - .env
+#     image: api-gateway
+#     networks:
+#       - my-network
+#     volumes:
+#       - .env:/app/.env
+#     container_name: api-gateway
+
+
+# networks:
+#   my-network:
+#     external: true
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - .env:/app/.env 
+    image: api-gateway
+    networks:
+      - my-network
+    container_name: api-gateway
+
+networks:
+  my-network:
+    external: true

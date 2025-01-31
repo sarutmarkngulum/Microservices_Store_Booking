@@ -1,0 +1,22 @@
+services:
+  restaurant-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "50053:50053"
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    volumes:
+      - .env:/app/.env
+    networks:
+      - my-network
+    image: restaurant-service 
+    container_name: restaurant-service 
+
+networks:
+  my-network:
+    external: true 

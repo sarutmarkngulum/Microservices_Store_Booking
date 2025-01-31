@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package services;
+option go_package="./services";
+
+service UserService {
+    rpc Register(UserRequest) returns (UserResponse); 
+    rpc Login(LoginRequest) returns (Token);
+    rpc GetAllUsers(Empty) returns (UserList);
+    rpc GetUser(UserIdentifier) returns (UserResponse); 
+    rpc UpdateUserRole(UpdateRoleRequest) returns (UserResponse);
+    rpc UpdateUserPassword(UpdatePasswordRequest) returns (UserResponse);
+    rpc DeleteUser(UserIdentifier) returns (Empty); 
+}
+
+message Empty {}
+
+message UserResponse {
+    string username = 1;
+    string role = 2;
+}
+
+message UserList {
+    repeated UserResponse users = 1; 
+}
+
+message UserIdentifier {
+    string identifier = 1; 
+}
+
+message UpdateRoleRequest {
+    string identifier = 1; 
+    string role = 2; 
+}
+
+message UpdatePasswordRequest {
+    string identifier = 1;
+    string password = 2;
+}
+
+
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string token = 1;
+}
+
+message Token {
+    string access_token = 1;
+}
+
+message UserRequest {
+    string username = 1;
+    string password = 2;
+}

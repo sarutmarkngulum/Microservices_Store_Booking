@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package services;
+
+import "google/protobuf/empty.proto"; 
+
+option go_package = "./services";
+
+service DashboardService {
+    // RPC สำหรับดึงข้อมูลสรุปใน Dashboard
+    rpc GetDailySummary (google.protobuf.Empty) returns (GetDailySummaryResponse);
+  
+    // RPC สำหรับดึงข้อมูลกราฟยอดขายรายเดือน/ปี
+    rpc GetMonthlySales (google.protobuf.Empty) returns (GetMonthlySalesResponse);
+
+    // RPC สำหรับดึงข้อมูลกราฟยอดจองและจำนวนลูกค้ารายเดือน
+    rpc GetMonthlyBookingAndCustomers (google.protobuf.Empty) returns (GetMonthlyBookingAndCustomersResponse);
+  
+    // RPC สำหรับดึงข้อมูลเมนูขายดี
+    rpc GetBestSellers (google.protobuf.Empty) returns (GetBestSellersResponse);
+}
+
+// ----------- RPC Messages -----------
+
+// Request และ Response สำหรับข้อมูลสรุปรายวัน
+message GetDailySummaryResponse {
+    double daily_sales = 1;        // ยอดขายรายวัน (float64)
+    int32 daily_bookings = 2;      // ยอดจองวันนี้
+    int32 daily_customers = 3;     // จำนวนลูกค้าเข้ารายวัน
+    int32 total_users = 4;         // จำนวนผู้ใช้ในระบบทั้งหมด
+}
+
+// Request และ Response สำหรับกราฟยอดขายรายเดือน/ปี
+message GetMonthlySalesResponse {
+    repeated MonthlySales sales = 1; // ข้อมูลยอดขายรายเดือน
+}
+
+message MonthlySales {
+    int32 month = 1; // เดือน (1-12)
+    double total_sales = 2; // ยอดขายรวมของเดือนนั้น (float64)
+}
+
+// Request และ Response สำหรับกราฟยอดจองและลูกค้ารายเดือน
+message GetMonthlyBookingAndCustomersResponse {
+    repeated MonthlyBookingAndCustomers data = 1; // ข้อมูลรายเดือน
+}
+
+message MonthlyBookingAndCustomers {
+    int32 month = 1;        // เดือน (1-12)
+    int32 total_bookings = 2; // ยอดจองในเดือนนั้น
+    int32 total_customers = 3; // จำนวนลูกค้าในเดือนนั้น
+}
+
+// Request และ Response สำหรับเมนูขายดี
+message GetBestSellersResponse {
+    repeated MenuSets top_menu_sets = 1;   // เมนูเซ็ตขายดี 5 อันดับแรก
+    repeated Menu top_a_la_carte = 2; // เมนู A La Carte ขายดี 5 อันดับแรก
+}
+
+message MenuSets {
+  string name_set_name = 1;  // ชื่อเซตเมนู     
+  int32 total_quantity_sold = 2; // จำนวนที่ขายได้ทั้งหมด
+}
+
+message Menu {
+    string name_th = 1;       // ชื่อเมนู (ภาษาไทย)
+    string name_en = 2;       // ชื่อเมนู (ภาษาอังกฤษ)
+    string image_url = 3;     // ลิงก์ภาพของเมนู
+    int32 total_quantity_sold = 4; // จำนวนที่ขายได้ทั้งหมด
+}

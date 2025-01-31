@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package services;
+
+option go_package = "./services";
+
+import "google/protobuf/empty.proto";
+
+service TableService {
+  // Handle Table
+  rpc CreateTable(CreateTableRequest) returns (CreateTableResponse);
+  rpc UpdateTable(UpdateTableRequest) returns (UpdateTableResponse);
+  rpc DeleteTable(DeleteTableRequest) returns (DeleteTableResponse);
+  rpc GetTables(google.protobuf.Empty) returns (TableList);
+  rpc GetTableByNumTable(GetTableByNumTableRequest) returns (GetTableByNumTableResponse);
+
+  rpc GetAvailableTables(GetAvailableTablesRequest) returns (GetAvailableTablesResponse);
+
+  // Handle Table Type Count
+  rpc UpdateTableType(UpdateTableTypeRequest) returns (UpdateTableTypeResponse);
+  rpc ListTableTypes(google.protobuf.Empty) returns (TableTypeList); 
+}
+
+// ------------------------- Table ----------------------------------
+
+// Table
+message Table {
+    string id = 1;               // ID ของโต๊ะ
+    int32 num_table = 2;         // หมายเลขโต๊ะ 
+    TableType type = 5;          // ประเภทของโต๊ะ
+}
+
+// List All Table
+message TableList {
+    repeated Table tables = 1;   // รายการของโต๊ะทั้งหมด
+}
+
+// เพิ่ม GetTableByNumTableRequest
+message GetTableByNumTableRequest {
+    int32 num_table = 1;         // หมายเลขโต๊ะที่ต้องการค้นหา
+}
+
+// เพิ่ม GetTableByNumTableResponse
+message GetTableByNumTableResponse {
+    Table table = 1;             // โต๊ะที่ค้นพบ
+}
+
+// Create New Table
+message CreateTableRequest {
+    int32 num_table = 1;         // หมายเลขโต๊ะ
+    TableType type = 2;          // ประเภทของโต๊ะ
+}
+
+message CreateTableResponse {
+    string id = 1;               // ID ของโต๊ะที่ถูกสร้าง
+    string status = 2;           // สถานะของการสร้างโต๊ะ (สำเร็จ/ล้มเหลว)
+}
+
+// Update Table
+message UpdateTableRequest {
+    string id = 1;               // ID ของโต๊ะ
+    int32 num_table = 2;         // หมายเลขโต๊ะ
+    TableType type = 3;          // ประเภทของโต๊ะ
+}
+
+message UpdateTableResponse {
+    string status = 1;           // สถานะการอัปเดต (สำเร็จ/ล้มเหลว)
+}
+
+// Delete Table
+message DeleteTableRequest {
+    string id = 1;               // ID ของโต๊ะที่จะลบ
+}
+
+message DeleteTableResponse {
+    string status = 1;           // สถานะการลบ (สำเร็จ/ล้มเหลว)
+}
+
+message GetAvailableTablesRequest{
+    string date = 1; // วันที่ที่ต้องการ (เช่น "2024-12-16")
+}
+
+message GetAvailableTablesResponse {
+    repeated TableAvailability available_tables = 1; 
+}
+
+message TableAvailability {
+    string time_slot = 1; // เวลา (เช่น 10:00, 11:00)
+    repeated Table tables = 2; // รายการโต๊ะที่ว่างในเวลานั้น
+}
+
+
+// ------------------------- Table Type ----------------------------------
+
+
+enum TableType {
+    TABLE_TYPE_UNKNOWN = 0;     // ค่าเริ่มต้นสำหรับประเภทโต๊ะที่ไม่ได้ระบุ 
+    STANDARD = 1;    // โต๊ะขนาดมาตรฐาน
+    LARGE = 2;       // โต๊ะขนาดใหญ่
+}
+message TableTypeCount {
+    TableType type = 1;        // ประเภทโต๊ะ
+    int32 count = 2;           // จำนวนโต๊ะในประเภทนี้
+}
+
+// List All Type Table
+message TableTypeList {
+    repeated TableTypeCount table_types = 1;  // รายการของประเภทโต๊ะพร้อมจำนวน
+}
+// Update Count Type Table
+message UpdateTableTypeRequest {
+    TableType type = 1;          // ประเภทโต๊ะที่ต้องการอัปเดต
+    int32 seat_count = 2;        // จำนวนที่นั่งใหม่สำหรับประเภทนี้
+}
+
+message UpdateTableTypeResponse {
+    string status = 1;           // สถานะการอัปเดตประเภทโต๊ะ (สำเร็จ/ล้มเหลว)
+}
